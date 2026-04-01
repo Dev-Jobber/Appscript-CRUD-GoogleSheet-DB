@@ -2,9 +2,7 @@
 
 // Configuration
 const CONFIG = {
-    // Replace this with your Google Apps Script Web App URL
     SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxmePy7vU86WDQPDS_ECp9wcV5JEYp3twEHKHcFVHqqifX3q-r0jNk9GvF-XYjMzqQo/exec',
-    // Sheet name
     SHEET_NAME: 'users'
 };
 
@@ -42,10 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // Event Listeners
 function initializeEventListeners() {
-    // Form submission
     elements.userForm.addEventListener('submit', handleFormSubmit);
-
-    // Button clicks
     elements.saveBtn.addEventListener('click', createUser);
     elements.updateBtn.addEventListener('click', updateUser);
     elements.cancelBtn.addEventListener('click', cancelEdit);
@@ -65,16 +60,9 @@ async function callAppsScript(action, data = {}) {
             })
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const result = await response.json();
-
-        if (result.status === 'error') {
-            throw new Error(result.message || 'API call failed');
-        }
-
+        if (result.status === 'error') throw new Error(result.message || 'API call failed');
         return result;
     } catch (error) {
         console.error('API call error:', error);
@@ -84,12 +72,8 @@ async function callAppsScript(action, data = {}) {
 
 // CRUD Functions
 async function createUser() {
-    if (!validateForm()) {
-        return;
-    }
-
+    if (!validateForm()) return;
     setLoading(true);
-
     try {
         const userData = {
             full_name: elements.fullName.value.trim(),
@@ -99,8 +83,7 @@ async function createUser() {
             status: elements.status.value
         };
 
-        const result = await callAppsScript('createUser', userData);
-
+        await callAppsScript('createUser', userData);
         showMessage('User created successfully!', 'success');
         resetForm();
         fetchUsers();
@@ -113,7 +96,6 @@ async function createUser() {
 
 async function fetchUsers() {
     setLoading(true);
-
     try {
         const result = await callAppsScript('getUsers');
         state.users = result.data || [];
@@ -128,12 +110,8 @@ async function fetchUsers() {
 }
 
 async function updateUser() {
-    if (!validateForm()) {
-        return;
-    }
-
+    if (!validateForm()) return;
     setLoading(true);
-
     try {
         const userData = {
             id: elements.userId.value,
@@ -144,8 +122,7 @@ async function updateUser() {
             status: elements.status.value
         };
 
-        const result = await callAppsScript('updateUser', userData);
-
+        await callAppsScript('updateUser', userData);
         showMessage('User updated successfully!', 'success');
         resetForm();
         fetchUsers();
@@ -157,15 +134,10 @@ async function updateUser() {
 }
 
 async function deleteUser(userId) {
-    if (!confirm('Are you sure you want to delete this user?')) {
-        return;
-    }
-
+    if (!confirm('Are you sure you want to delete this user?')) return;
     setLoading(true);
-
     try {
-        const result = await callAppsScript('deleteUser', { id: userId });
-
+        await callAppsScript('deleteUser', { id: userId });
         showMessage('User deleted successfully!', 'success');
         fetchUsers();
     } catch (error) {
@@ -197,7 +169,6 @@ function renderUsersTable() {
 
 function createUserRow(user) {
     const row = document.createElement('tr');
-
     row.innerHTML = `
         <td>${user.id}</td>
         <td>${escapeHtml(user.full_name)}</td>
@@ -213,21 +184,17 @@ function createUserRow(user) {
             </div>
         </td>
     `;
-
     return row;
 }
 
 function editUser(userId) {
     const user = state.users.find(u => u.id === userId);
-
     if (!user) {
         showMessage('User not found!', 'error');
         return;
     }
-
     state.editingUserId = userId;
 
-    // Populate form
     elements.userId.value = user.id;
     elements.fullName.value = user.full_name;
     elements.email.value = user.email;
@@ -235,13 +202,11 @@ function editUser(userId) {
     elements.role.value = user.role;
     elements.status.value = user.status;
 
-    // Update UI
     elements.formTitle.textContent = 'Edit User';
     elements.saveBtn.style.display = 'none';
     elements.updateBtn.style.display = 'inline-block';
     elements.cancelBtn.style.display = 'inline-block';
 
-    // Scroll to form
     elements.userForm.scrollIntoView({ behavior: 'smooth' });
 }
 
@@ -254,7 +219,6 @@ function resetForm() {
     elements.userId.value = '';
     state.editingUserId = null;
 
-    // Update UI
     elements.formTitle.textContent = 'Add New User';
     elements.saveBtn.style.display = 'inline-block';
     elements.updateBtn.style.display = 'none';
@@ -262,6 +226,13 @@ function resetForm() {
 }
 
 function showMessage(message, type = 'info') {
+    // 1. Alert exactly as requested for errors, saves, fetches, deletes
+    // Used setTimeout so the UI/loading unfreezes first before blocking with Alert
+    setTimeout(() => {
+        alert(message);
+    }, 10);
+
+    // 2. Keep visual DOM message active for better UI structure integrity 
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${type}`;
     messageDiv.textContent = message;
@@ -269,7 +240,6 @@ function showMessage(message, type = 'info') {
     elements.messageArea.innerHTML = '';
     elements.messageArea.appendChild(messageDiv);
 
-    // Auto remove after 5 seconds
     setTimeout(() => {
         if (messageDiv.parentNode) {
             messageDiv.remove();
@@ -279,27 +249,23 @@ function showMessage(message, type = 'info') {
 
 function setLoading(loading) {
     state.isLoading = loading;
-
     if (loading) {
         elements.loadingSpinner.style.display = 'block';
         elements.emptyState.style.display = 'none';
+        elements.usersTableBody.innerHTML = '';
     } else {
         elements.loadingSpinner.style.display = 'none';
     }
 
-    // Disable/enable form buttons
     const buttons = [elements.saveBtn, elements.updateBtn];
     buttons.forEach(btn => {
-        if (btn) {
-            btn.disabled = loading;
-        }
+        if (btn) btn.disabled = loading;
     });
 }
 
 // Form Handling
 function handleFormSubmit(e) {
     e.preventDefault();
-
     if (state.editingUserId) {
         updateUser();
     } else {
@@ -314,42 +280,12 @@ function validateForm() {
     const role = elements.role.value;
     const status = elements.status.value;
 
-    // Required fields
-    if (!fullName) {
-        showMessage('Full name is required!', 'error');
-        elements.fullName.focus();
-        return false;
-    }
-
-    if (!email) {
-        showMessage('Email is required!', 'error');
-        elements.email.focus();
-        return false;
-    }
-
-    if (!isValidEmail(email)) {
-        showMessage('Please enter a valid email address!', 'error');
-        elements.email.focus();
-        return false;
-    }
-
-    if (!phone) {
-        showMessage('Phone number is required!', 'error');
-        elements.phone.focus();
-        return false;
-    }
-
-    if (!role) {
-        showMessage('Please select a role!', 'error');
-        elements.role.focus();
-        return false;
-    }
-
-    if (!status) {
-        showMessage('Please select a status!', 'error');
-        elements.status.focus();
-        return false;
-    }
+    if (!fullName) { showMessage('Full name is required!', 'error'); elements.fullName.focus(); return false; }
+    if (!email) { showMessage('Email is required!', 'error'); elements.email.focus(); return false; }
+    if (!isValidEmail(email)) { showMessage('Please enter a valid email address!', 'error'); elements.email.focus(); return false; }
+    if (!phone) { showMessage('Phone number is required!', 'error'); elements.phone.focus(); return false; }
+    if (!role) { showMessage('Please select a role!', 'error'); elements.role.focus(); return false; }
+    if (!status) { showMessage('Please select a status!', 'error'); elements.status.focus(); return false; }
 
     return true;
 }
@@ -361,20 +297,12 @@ function isValidEmail(email) {
 }
 
 function escapeHtml(text) {
-    const map = {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#039;'
-    };
-
+    const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
     return text.replace(/[&<>"']/g, m => map[m]);
 }
 
 function formatDate(dateString) {
     if (!dateString) return 'N/A';
-
     try {
         const date = new Date(dateString);
         return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
@@ -383,6 +311,5 @@ function formatDate(dateString) {
     }
 }
 
-// Make functions globally accessible for onclick handlers
 window.editUser = editUser;
 window.deleteUser = deleteUser;
