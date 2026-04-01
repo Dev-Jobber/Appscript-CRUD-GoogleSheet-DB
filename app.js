@@ -51,16 +51,20 @@ async function callAppsScript(action, data = {}) {
     try {
         const response = await fetch(CONFIG.SCRIPT_URL, {
             method: 'POST',
+            mode: 'cors', // Ensure cors mode is explicit
             headers: {
+                // Use text/plain to avoid the "OPTIONS" preflight check
                 'Content-Type': 'text/plain;charset=utf-8',
             },
             body: JSON.stringify({
                 action: action,
                 data: data
-            })
+            }),
+            redirect: 'follow' // REQUIRED for Google Apps Script redirects
         });
 
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
         const result = await response.json();
         if (result.status === 'error') throw new Error(result.message || 'API call failed');
         return result;

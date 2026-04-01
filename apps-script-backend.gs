@@ -7,74 +7,44 @@ const SPREADSHEET_ID = SpreadsheetApp.getActiveSpreadsheet().getId();
 
 // Main function to handle all API requests
 function doPost(e) {
-    try {
-        // Enable CORS for all origins
-        const corsHeaders = {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type'
-        };
-        
-        // Handle preflight OPTIONS request
-        if (e.parameter.method === 'OPTIONS') {
-            return ContentService.createTextOutput('')
-                .setMimeType(ContentService.MimeType.TEXT);
-        }
-        
-        const data = JSON.parse(e.postData.contents);
-        const action = data.action;
-        const params = data.data || {};
-        
-        let result;
-        
-        switch (action) {
-            case 'createUser':
-                result = createUser(params);
-                break;
-            case 'getUsers':
-                result = getUsers();
-                break;
-            case 'getUserById':
-                result = getUserById(params.id);
-                break;
-            case 'updateUser':
-                result = updateUser(params);
-                break;
-            case 'deleteUser':
-                result = deleteUser(params.id);
-                break;
-            default:
-                result = {
-                    status: 'error',
-                    message: 'Invalid action: ' + action
-                };
-        }
-        
-        const output = ContentService.createTextOutput(JSON.stringify(result))
-            .setMimeType(ContentService.MimeType.JSON);
-        
-        // Set CORS headers
-        Object.keys(corsHeaders).forEach(key => {
-            output.addHeader(key, corsHeaders[key]);
-        });
-        
-        return output;
-            
-    } catch (error) {
-        Logger.log('Error in doPost: ' + error.toString());
-        
-        const errorOutput = ContentService.createTextOutput(JSON.stringify({
-            status: 'error',
-            message: error.toString()
-        })).setMimeType(ContentService.MimeType.JSON);
-        
-        // Add CORS headers to error response too
-        errorOutput.addHeader('Access-Control-Allow-Origin', '*');
-        errorOutput.addHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-        errorOutput.addHeader('Access-Control-Allow-Headers', 'Content-Type');
-        
-        return errorOutput;
+  try {
+    // Parse the incoming data
+    // Since we send as 'text/plain' from JS, we parse e.postData.contents
+    const data = JSON.parse(e.postData.contents);
+    const action = data.action;
+    const params = data.data || {};
+    
+    let result;
+    
+    switch (action) {
+      case 'createUser': result = createUser(params); break;
+      case 'getUsers': result = getUsers(); break;
+      case 'getUserById': result = getUserById(params.id); break;
+      case 'updateUser': result = updateUser(params); break;
+      case 'deleteUser': result = deleteUser(params.id); break;
+      default:
+        result = { status: 'error', message: 'Invalid action: ' + action };
     }
+    
+    // Simply return the TextOutput. 
+    // Google will automatically add the necessary CORS headers.
+    return ContentService.createTextOutput(JSON.stringify(result))
+        .setMimeType(ContentService.MimeType.JSON);
+            
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({
+        status: 'error',
+        message: error.toString()
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+// Keep your doGet, but remove the .addHeader lines
+function doGet(e) {
+  return ContentService.createTextOutput(JSON.stringify({
+      status: 'error',
+      message: 'Invalid GET request. Use POST.'
+  })).setMimeType(ContentService.MimeType.JSON);
 }
 
 // Handle GET requests (optional for testing)
