@@ -2,7 +2,7 @@
 
 // Configuration
 const CONFIG = {
-    SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxmePy7vU86WDQPDS_ECp9wcV5JEYp3twEHKHcFVHqqifX3q-r0jNk9GvF-XYjMzqQo/exec',
+    SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwQj-muitSj5FLLK3U8bYPOWXIot0nEZkKG0MNKP81UN5NxYC1SM3SForTAHJBgU6CV/exec',
     SHEET_NAME: 'users'
 };
 
