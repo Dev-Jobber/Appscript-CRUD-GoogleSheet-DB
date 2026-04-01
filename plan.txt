@@ -1,0 +1,346 @@
+GOAL
+Build a simple "Real Database Style" User CRUD app using only:
+- HTML
+- CSS
+- JavaScript
+- Google Sheets
+- Google Apps Script
+
+OBJECTIVE
+Create a frontend app that looks like a small admin dashboard and performs:
+- Create User
+- Read Users
+- Update User
+- Delete User
+
+The frontend will talk to Google Apps Script API, and Google Sheets will behave like the database.
+
+==================================================
+FULL SYSTEM ARCHITECTURE
+==================================================
+
+Frontend (HTML + CSS + JS)
+        ↓
+Google Apps Script API
+        ↓
+Google Sheets (users table)
+
+==================================================
+WHAT WE WILL BUILD
+==================================================
+
+A simple User Management App with:
+
+1. User Form
+- Full Name
+- Email
+- Phone
+- Role
+- Status
+
+2. User Table
+- ID
+- Name
+- Email
+- Phone
+- Role
+- Status
+- Created Time
+- Actions
+
+3. Features
+- Add new user
+- View all users
+- Edit existing user
+- Delete user
+- Search user (optional after CRUD)
+- Loading states
+- Success / error messages
+
+==================================================
+PROJECT STRUCTURE
+==================================================
+
+We will keep it very simple:
+
+/project
+   ├── index.html
+   ├── style.css
+   └── app.js
+
+==================================================
+PHASE 1 — GOOGLE SHEET DATABASE DESIGN
+==================================================
+
+Create one sheet named:
+
+users
+
+Columns:
+
+A  id
+B  full_name
+C  email
+D  phone
+E  role
+F  status
+G  created_at
+H  updated_at
+I  deleted_at
+J  is_deleted
+
+Purpose:
+- id → unique user ID
+- full_name → user name
+- email → unique email
+- phone → contact number
+- role → admin / user / manager
+- status → active / inactive / blocked
+- created_at → insert time
+- updated_at → update time
+- deleted_at → soft delete time
+- is_deleted → true / false
+
+==================================================
+PHASE 2 — APPS SCRIPT BACKEND API
+==================================================
+
+Apps Script will behave like our backend.
+
+We will create API actions like:
+
+1. createUser
+2. getUsers
+3. getUserById
+4. updateUser
+5. deleteUser
+
+Example API calls:
+
+?action=getUsers
+
+POST:
+{
+  "action": "createUser",
+  "data": {
+    "full_name": "John Doe",
+    "email": "john@example.com",
+    "phone": "9999999999",
+    "role": "user",
+    "status": "active"
+  }
+}
+
+==================================================
+PHASE 3 — FRONTEND UI PLAN (HTML)
+==================================================
+
+We will create these UI sections:
+
+1. Page Header
+- Title: User Management System
+- Small subtitle
+
+2. User Form Card
+Fields:
+- Full Name
+- Email
+- Phone
+- Role dropdown
+- Status dropdown
+
+Buttons:
+- Save User
+- Update User
+- Cancel Edit
+
+3. Message Area
+- success message
+- error message
+
+4. User List Table
+Columns:
+- ID
+- Name
+- Email
+- Phone
+- Role
+- Status
+- Created At
+- Actions
+
+Actions:
+- Edit
+- Delete
+
+==================================================
+PHASE 4 — FRONTEND STYLING PLAN (CSS)
+==================================================
+
+We will design it like a clean mini admin panel.
+
+UI style:
+- centered container
+- modern card design
+- responsive form layout
+- styled buttons
+- clean table
+- status badges
+- hover effects
+- loading states
+
+Sections:
+- page wrapper
+- form card
+- button styles
+- table styles
+- message alerts
+- mobile responsive layout
+
+==================================================
+PHASE 5 — FRONTEND LOGIC PLAN (JAVASCRIPT)
+==================================================
+
+We will create JS functions for:
+
+1. API Configuration
+- store Apps Script URL
+
+2. State Management
+- current edit user ID
+- loading state
+
+3. CRUD Functions
+- createUser()
+- fetchUsers()
+- editUser()
+- updateUser()
+- deleteUser()
+
+4. UI Functions
+- renderUsersTable()
+- populateForm()
+- resetForm()
+- showMessage()
+- setLoading()
+
+5. Validation
+- required field checks
+- email format check
+- optional duplicate handling from backend response
+
+==================================================
+PHASE 6 — HOW USER FLOW WILL WORK
+==================================================
+
+CREATE FLOW
+1. Fill form
+2. Click Save User
+3. JS sends data to Apps Script
+4. Apps Script stores in Google Sheet
+5. UI refreshes table
+
+READ FLOW
+1. Page loads
+2. JS fetches all users
+3. Table renders automatically
+
+UPDATE FLOW
+1. Click Edit
+2. Form fills with selected user
+3. Click Update User
+4. JS sends update request
+5. Sheet updates row
+6. Table refreshes
+
+DELETE FLOW
+1. Click Delete
+2. Confirm delete
+3. JS sends delete request
+4. Apps Script soft deletes row
+5. Table refreshes
+
+==================================================
+PHASE 7 — REAL-DATABASE-LIKE FEATURES
+==================================================
+
+We will make it feel like a proper system by adding:
+
+- unique user ID (example: USR_000001)
+- duplicate email prevention
+- timestamps
+- soft delete
+- clean API responses
+- proper validation
+- edit mode vs create mode
+- modular frontend functions
+
+==================================================
+PHASE 8 — BUILD ORDER (STEP BY STEP)
+==================================================
+
+STEP 1
+Create Google Sheet table
+
+STEP 2
+Create Apps Script backend base
+
+STEP 3
+Build create user API
+
+STEP 4
+Build get users API
+
+STEP 5
+Build update user API
+
+STEP 6
+Build delete user API
+
+STEP 7
+Create index.html layout
+
+STEP 8
+Create style.css design
+
+STEP 9
+Create app.js logic
+
+STEP 10
+Connect frontend to Apps Script API
+
+STEP 11
+Test full CRUD
+
+STEP 12
+Polish UI and fix errors
+
+==================================================
+FINAL RESULT
+==================================================
+
+At the end, you will have:
+
+- a working user CRUD app
+- frontend with HTML/CSS/JS only
+- backend with Apps Script
+- Google Sheets as database
+- real-database-like structure
+- usable for admin panels / MVP / internal tools
+
+==================================================
+IMPORTANT RULE
+==================================================
+
+We will build this in the cleanest order:
+
+1. backend first
+2. then frontend
+3. then connect both
+
+That way nothing breaks randomly.
+
+NEXT STEP
+Start with:
+
+STEP 1 — Create the Google Sheet database structure

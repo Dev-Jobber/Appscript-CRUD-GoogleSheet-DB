@@ -1,0 +1,98 @@
+<div class="container">
+    <!-- Page Header -->
+    <header class="page-header">
+        <div class="header-content">
+            <h1>User Management</h1>
+            <p>Admin Dashboard & Database Control</p>
+        </div>
+    </header>
+
+    <main class="dashboard-grid">
+        <!-- Message Area -->
+        <div id="messageArea" class="message-area"></div>
+
+        <!-- User Form Card -->
+        <section class="card form-card">
+            <div class="card-header">
+                <h2 id="formTitle">Add New User</h2>
+            </div>
+            <form id="userForm" class="modern-form">
+                <input type="hidden" id="userId">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fullName">Full Name</label>
+                        <input type="text" id="fullName" placeholder="John Doe" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" placeholder="john@company.com" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" placeholder="+1 (555) 000-0000" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="role">Access Level</label>
+                        <select id="role" required>
+                            <option value="">Select Role</option>
+                            <option value="admin">Admin</option>
+                            <option value="user">User</option>
+                            <option value="manager">Manager</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="status">Account Status</label>
+                    <select id="status" required>
+                        <option value="">Set Status</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                        <option value="blocked">Blocked</option>
+                    </select>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" id="saveBtn" class="btn btn-primary">Create User</button>
+                    <button type="button" id="updateBtn" class="btn btn-primary" style="display: none;">Update
+                        User</button>
+                    <button type="button" id="cancelBtn" class="btn btn-ghost" style="display: none;">Cancel</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- User List Table -->
+        <section class="card table-section">
+            <div class="card-header">
+                <h2>Active Directory</h2>
+            </div>
+            <div class="table-wrapper">
+                <table id="usersTable">
+                    <thead>
+                        <tr>
+                            <th>User Details</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th class="text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <!-- Dynamic Content -->
+                    </tbody>
+                </table>
+
+                <div id="loadingSpinner" class="loading" style="display: none;">
+                    <div class="spinner"></div>
+                </div>
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    <p>No records found in the directory.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
